@@ -1,0 +1,182 @@
+<script type="text/javascript" src="VISCA.js"></script>
+
+<script src="http://www.google.com/jsapi" language="javascript"></script>
+<script type="text/javascript" charset="utf-8">
+	google.load("jquery", "1.3.2");
+</script>
+<script src="http://marco.calit2.uci.edu/lib/jquery/jquery.json-2.2.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript">
+function jsonPost(command) {
+	if ($('#server_location').val() === "") {
+		serverLocation = "/";
+ 	} else {
+		serverLocation = "http://" + $('#server_location').val() + "/";
+	}
+	
+	post_data = {
+		input: command,
+	};
+	data_string = $.toJSON(post_data);
+
+	method = "POST";
+	encodeURIComponent(data_string);
+
+	$.getJSON(serverLocation + "?method=" + method + "&body=" + data_string + "&callback=?", function(data) {
+		console.log("Response: " + $.toJSON(data));
+	});
+}
+
+VISCA_Camera = {
+	ZOOM_IN: function(camera) {
+		jsonPost(VISCA.CAM_Zoom.TeleStandard(camera, 5));
+	},
+	ZOOM_OUT: function(camera) {
+		jsonPost(VISCA.CAM_Zoom.WideStandard(camera, 5));
+	},
+	ZOOM_STOP: function(camera) {
+		jsonPost(VISCA.CAM_Zoom.Stop(camera));
+	},
+	BACKLIGHT_ON: function(camera) {
+		jsonPost(VISCA.CAM_Backlight.On(camera));
+	},
+	BACKLIGHT_OFF: function(camera) {
+		jsonPost(VISCA.CAM_Backlight.Off(camera));		
+	},
+	MOVE_UP: function(camera, pan_speed, tilt_speed) {
+		if (camera === undefined) {
+			camera = "1";
+		}
+		if (camera === undefined) {
+			camera = "1";
+		}
+		if (pan_speed === undefined) {
+			pan_speed = "05";
+		}
+		if (tilt_speed === undefined) {
+			tilt_speed = "05";
+		}
+		jsonPost(VISCA.Pan_tiltDrive.Up(camera, pan_speed, tilt_speed));
+	},
+	MOVE_DOWN: function(camera, pan_speed, tilt_speed) {
+		if (camera === undefined) {
+			camera = "1";
+		}
+		if (pan_speed === undefined) {
+			pan_speed = "05";
+		}
+		if (tilt_speed === undefined) {
+			tilt_speed = "05";
+		}
+		jsonPost(VISCA.Pan_tiltDrive.Down(camera, pan_speed, tilt_speed));
+	},
+	MOVE_LEFT: function(camera, pan_speed, tilt_speed) {
+		if (camera === undefined) {
+			camera = "1";
+		}
+		if (pan_speed === undefined) {
+			pan_speed = "05";
+		}
+		if (tilt_speed === undefined) {
+			tilt_speed = "05";
+		}
+		jsonPost(VISCA.Pan_tiltDrive.Left(camera, pan_speed, tilt_speed));
+	},
+	MOVE_RIGHT: function(camera, pan_speed, tilt_speed) {
+		if (camera === undefined) {
+			camera = "1";
+		}
+		if (pan_speed === undefined) {
+			pan_speed = "05";
+		}
+		if (tilt_speed === undefined) {
+			tilt_speed = "05";
+		}
+		jsonPost(VISCA.Pan_tiltDrive.Right(camera, pan_speed, tilt_speed));
+	},
+	MOVE_STOP: function(camera, pan_speed, tilt_speed) {
+		if (camera === undefined) {
+			camera = "1";
+		}
+		if (pan_speed === undefined) {
+			pan_speed = "05";
+		}
+		if (tilt_speed === undefined) {
+			tilt_speed = "05";
+		}
+		jsonPost(VISCA.Pan_tiltDrive.Stop(camera, pan_speed, tilt_speed));
+	},
+	MOVE_HOME: function(camera) {
+		if (camera === undefined) {
+			camera = "1";
+		}
+		jsonPost(VISCA.Pan_tiltDrive.Home(camera));
+	},
+}
+</script>
+<script type="text/javascript" charset="utf-8">
+	$(document).keyup(function(event){
+		switch (event.keyCode) {
+			case 37: // LEFT KEY
+			case 38: // UP KEY
+			case 39: // RIGHT KEY
+			case 40: // DOWN KEY
+				VISCA.Pan_tiltDrive.Stop();
+				break;
+			case 188: // '<' KEY
+			case 190: // '>' KEY
+				VISCA.CAM_Zoom.Stop();
+				break;
+			default:
+				break;
+		}
+	});
+	
+	$(document).keydown(function(event){
+		switch (event.keyCode) {
+			case 37: // LEFT KEY
+				cameraCommand('MOVE_LEFT');
+				break;
+			case 38: // UP KEY
+				cameraCommand('MOVE_UP');
+				break;
+			case 39: // RIGHT KEY
+				cameraCommand('MOVE_RIGHT');
+				break;
+			case 40: // DOWN KEY
+				cameraCommand('MOVE_DOWN');
+				break;
+			case 188: // '<' KEY
+				cameraCommand('ZOOM_OUT');
+				break;
+			case 190: // '>' KEY
+				cameraCommand('ZOOM_IN');
+				break;
+			default:
+				break;
+		}
+	});
+
+	$(document).ready(function() {
+		alert("Ready");
+	});
+</script>
+
+<h1>Martinelli Testing</h1>
+
+<h2>Camera</h2>
+
+Resource URL: <br />
+http://<input type="text" id="server_location" name="server_location"> 
+<br />
+<a onmousedown="VISCA_Camera.MOVE_UP(1)" onmouseup="VISCA_Camera.MOVE_STOP(1)" href="#">UP!</a><br />
+<a onmousedown="VISCA_Camera.MOVE_DOWN(1)" onmouseup="VISCA_Camera.MOVE_STOP(1)" href="#">DOWN!</a><br />
+<a onmousedown="VISCA_Camera.MOVE_LEFT(1)" onmouseup="VISCA_Camera.MOVE_STOP(1)" href="#">LEFT!</a><br />
+<a onmousedown="VISCA_Camera.MOVE_RIGHT(1)" onmouseup="VISCA_Camera.MOVE_STOP(1)" href="#">RIGHT!</a><br />
+<a onmousedown="VISCA_Camera.MOVE_HOME(1)" onmouseup="VISCA_Camera.MOVE_STOP(1)" href="#">HOME!</a><br />
+<a onclick="VISCA_Camera.MOVE_STOP(1)" href="#">STOP!</a><br />
+<a onmousedown="VISCA_Camera.ZOOM_IN(1)" onmouseup="VISCA_Camera.ZOOM_STOP(1)" href="#">Zoom IN!</a><br />
+<a onmousedown="VISCA_Camera.ZOOM_OUT(1)" onmouseup="VISCA_Camera.ZOOM_STOP(1)" href="#">Zoom OUT!</a><br />
+<a onclick="VISCA_Camera.ZOOM_STOP(1)" href="#">Zoom STOP!</a><br />
+<a onmousedown="VISCA_Camera.BACKLIGHT_ON(1)" href="#">Backlight ON</a><br />
+<a onmousedown="VISCA_Camera.BACKLIGHT_OFF(1)" href="#">Backlight OFF</a><br />
