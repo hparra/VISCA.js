@@ -1,0 +1,3 @@
+VISCA.js is an implementation of the VISCA Protocol using human-readable JavaScript.
+
+VISCA.js was designed to be used with Martinelli, a closed-source program of the Telios project (http://telios.calit2.uci.edu)
